@@ -38,7 +38,7 @@
       compatible = "zmk,behavior-mod-morph";
       label = "COMMA_LEFT_ABK";
       #binding-cells = <0>;
-      bindings = <&kp COMMA>, <&mt MAC_LABK DE_LABK>;
+      bindings = <&kp COMMA>, <&mackey DE_LABK MAC_LABK>;
       mods = <(MOD_LSFT|MOD_RSFT)>;
     };
 
@@ -46,24 +46,60 @@
       compatible = "zmk,behavior-mod-morph";
       label = "DOT_RIGHT_ABK";
       #binding-cells = <0>;
-      bindings = <&kp DOT>, <&mt MAC_RABK DE_RABK>;
+      bindings = <&kp DOT>, <&mackey DE_RABK MAC_RABK>;
       mods = <(MOD_LSFT|MOD_RSFT)>;
     };
 
-    ht_compcar: mac_compatible_carret_hold {
-      compatible = "zmk,behavior-hold-tap";
-      label = "MAC_COMPATIBLE_CARRET_HOLD";
-      #binding-cells = <2>;
-      flavor = "hold-preferred";
-      tapping-term-ms = <200>;
-      bindings = <&mac_caret>, <&caret>;
+    maclock: mac_layout_lock {
+      compatible = "zmk,behavior-custom-lock";
+      label = "mac-layout-toggle";
+      #binding-cells = <0>;
+
+      mcaret: mac_caret {
+        label = "mac-caret";
+        #binding-cells = <2>;
+        bindings = <&dcaret>, <&dmcaret>;
+      };
+
+      mackey: mac_key {
+        label = "mac-key";
+        #binding-cells = <2>;
+        bindings = <&kp>, <&kp>;
+      };
+    };
+
+    deadlock: dead_lock_prevent {
+      compatible = "zmk,behavior-custom-lock";
+      label = "dead-key-toggle";
+      #binding-cells = <0>;
+
+      dcaret: dead_key_caret {
+        label = "dead-caret-key";
+        #binding-cells = <2>;
+        bindings = <&dead_caret>, <&caret>;
+      };
+
+      dmcaret: dead_mac_key_caret {
+        label = "dead-mac-caret-key";
+        #binding-cells = <2>;
+        bindings = <&dead_mac_caret>, <&mac_caret>;
+      };
+
+      dgrave: dead_grave_key {
+        label = "dead-grave-key";
+        #binding-cells = <2>;
+        bindings = <&dead_grave>, <&kp>;
+      };
     };
   };
 
   macros {
-    ZMK_MACRO(caret, tap-ms = <1>; bindings = <&kp DE_CIRC &kp SPACE>;)
-    ZMK_MACRO(mac_caret, tap-ms = <1>; bindings = <&kp MAC_CIRC &kp SPACE>;)
-    ZMK_MACRO(grave, tap-ms = <1>; bindings = <&kp DE_GRV &kp SPACE>;)
+    ZMK_MACRO(dead_caret, tap-ms = <1>; bindings = <&kp DE_CIRC &kp SPACE>;)
+    ZMK_MACRO(caret, tap-ms = <1>; bindings = <&kp DE_CIRC>;)
+    ZMK_MACRO(dead_mac_caret, tap-ms = <1>; bindings = <&kp MAC_CIRC &kp SPACE>;)
+    ZMK_MACRO(mac_caret, tap-ms = <1>; bindings = <&kp MAC_CIRC>;)
+
+    ZMK_MACRO(dead_grave, tap-ms = <1>; bindings = <&kp DE_GRV &kp SPACE>;)
   };
   
   keymap0: keymap {
@@ -82,12 +118,12 @@
 
     function_layer {
       bindings = <
-&bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &out OUT_TOG  &none  &none  &none  &none  &none  &none  &none  &none  &none  &bootloader
-&none      &none        &none        &none        &none         &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none      &none        &none        &none        &none         &none  &none  &none  &none  &none  &none  &none  &none  &none
-&none      &none        &none        &none        &none         &none  &none  &none  &none  &none  &none  &none  &none
-&none      &none        &none        &none        &none         &none  &none  &none  &none  &none  &none  &none         &none
-&none      &mo FNL      &none        &none               &none                              &none  &none  &none  &none  &none  &none
+&bt BT_CLR &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &out OUT_TOG  &none  &none  &none  &none     &none  &none  &none  &none  &none  &bootloader
+&none      &none        &none        &none        &none         &none  &none  &none  &none     &none  &none  &none  &none  &none
+&none      &none        &none        &none        &none         &none  &none  &none  &none     &none  &none  &none  &none  &none
+&none      &none        &none        &deadlock    &none         &none  &none  &none  &none     &none  &none  &none  &none
+&none      &none        &none        &none        &none         &none  &none  &none  &maclock  &none  &none  &none         &none
+&none      &mo FNL      &none        &none              &none                                  &none  &none  &none  &none  &none  &none
         >;
     };
 
@@ -95,9 +131,9 @@
       bindings = <
 &trans   &trans      &trans      &trans       &trans       &trans       &trans      &trans       &trans       &trans       &trans      &trans       &trans    &kp INS  &kp DEL
 &trans   &kp F1      &kp F2      &kp F3       &kp F4       &kp F5       &kp F6      &kp F7       &kp F8       &kp F9       &kp F10     &kp F11      &kp F12   &trans
-&trans   &kp DE_QUES &kp DE_BSLH &mt MAC_PIPE DE_PIPE  &kp DE_FSLH  &kp DE_EXCL  &kp DE_AT   &kp DE_PLUS  &kp DE_MINS  &kp DE_STAR  &kp DE_FSLH &kp DE_AMPS  &trans    &trans
-&trans   &kp DE_EQL  &kp DE_LBKT &kp DE_LBRC  &kp DE_LPAR  &kp DE_HASH  &kp LEFT    &kp DOWN     &kp UP       &kp RIGHT    &ht_compcar 0 0  &trans       &trans
-&trans   &trans      &kp DE_UNDS &kp DE_RBKT  &kp DE_RBRC  &kp DE_RPAR  &kp DE_PERC &kp DE_DLR   &kp DE_TILD  &grave       &quote      &trans                 &trans
+&trans   &kp DE_QUES &kp DE_BSLH &mackey DE_PIPE MAC_PIPE &kp DE_FSLH  &kp DE_EXCL  &kp DE_AT   &kp DE_PLUS  &kp DE_MINS  &kp DE_STAR  &kp DE_FSLH &kp DE_AMPS  &trans    &trans
+&trans   &kp DE_EQL  &kp DE_LBKT &kp DE_LBRC  &kp DE_LPAR  &kp DE_HASH  &kp LEFT    &kp DOWN     &kp UP       &kp RIGHT    &mcaret 0 0  &trans       &trans
+&trans   &trans      &kp DE_UNDS &kp DE_RBKT  &kp DE_RBRC  &kp DE_RPAR  &kp DE_PERC &kp DE_DLR   &kp DE_TILD  &dgrave 0 DE_GRV &quote      &trans                 &trans
 &trans   &trans      &trans      &trans                   &trans                                 &trans       &trans       &trans      &trans       &trans    &trans
         >;
     };
