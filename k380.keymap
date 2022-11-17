@@ -53,6 +53,7 @@
     maclock: mac_layout_lock {
       compatible = "zmk,behavior-custom-lock";
       label = "mac-layout-toggle";
+      persistence = "per-profile";
       #binding-cells = <0>;
 
       mcaret: mac_caret {
@@ -71,6 +72,7 @@
     deadlock: dead_lock_prevent {
       compatible = "zmk,behavior-custom-lock";
       label = "dead-key-toggle";
+      persistence = "per-profile";
       #binding-cells = <0>;
 
       dcaret: dead_key_caret {
